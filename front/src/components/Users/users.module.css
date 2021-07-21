@@ -1,0 +1,19 @@
+.userBlock {
+    display: inline-block;
+    border: solid black 1px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.userImg {
+    width: 420px;
+    height: 450px;
+}
+
+.pages {
+    margin: 5px;
+}
+
+.nickname {
+    font-weight: bold;
+}

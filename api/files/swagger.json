@@ -1,0 +1,320 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "API Mock server",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "summary": "List all users",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "search[nickname]",
+            "in": "query",
+            "required": false,
+            "description": "Search by nickname (like)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search[country]",
+            "in": "query",
+            "required": false,
+            "description": "Search by coutries (like)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    },
+                    "metadata": {
+                      "$ref": "#/components/schemas/UserPagination"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{user_id}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "description": "User ID",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "User details",
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "Single user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/not-found-error"
+          }
+        }
+      }
+    },
+    "/message": {
+      "post": {
+        "summary": "Send message to user",
+        "tags": [
+          "Message"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fake message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "new_user": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/form-validation-error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "form-validation-error": {
+        "description": "Request have validation errors",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "error": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "violations": {
+                      "properties": {
+                        "_field_name_": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "not-found-error": {
+        "description": "Record was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "error": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "User": {
+        "required": [
+          "id",
+          "username",
+          "nickname",
+          "avatar",
+          "country",
+          "age"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "User ID"
+          },
+          "username": {
+            "type": "string",
+            "description": "User username"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "User nickname"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "User path to avatar"
+          },
+          "country": {
+            "type": "integer",
+            "description": "User country"
+          },
+          "age": {
+            "type": "integer",
+            "description": "User age"
+          }
+        }
+      },
+      "Message": {
+        "required": [
+          "user_list",
+          "name",
+          "message",
+          "email",
+          "country",
+          "age"
+        ],
+        "properties": {
+          "user_list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserListElement"
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country"
+          },
+          "age": {
+            "type": "integer",
+            "description": "Age"
+          }
+        }
+      },
+      "UserListElement": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "User ID"
+          }
+        }
+      },
+      "UserPagination": {
+        "required": [
+          "page",
+          "records_per_page",
+          "total_records"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "User list page"
+          },
+          "records_per_page": {
+            "type": "integer",
+            "description": "User list records per page"
+          },
+          "total_records": {
+            "type": "integer",
+            "description": "User list total records"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "Information about users"
+    },
+    {
+      "name": "Message",
+      "description": "Send message to user"
+    }
+  ]
+}
